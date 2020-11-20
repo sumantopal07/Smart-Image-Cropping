@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <title></title>
+</head>
+
+<body>
+    <h1>bvb</h1>
+</body>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect("http://localhost:5000/");
+    const x=document.querySelector("h1");
+    socket.on('connect', function () {
+        console.log("Connection Made");
+        socket.emit("my event","ccc");
+
+        socket.on('haha',(i)=>{
+            x.innerHTML=i;
+            setTimeout(()=>{
+                
+            },1000);
+        })
+    });
+</script>
+
+</html>
