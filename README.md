@@ -24,7 +24,9 @@ https://youtu.be/i6xf8byebbo
 ## Installation
 
 ```bash
-git clone https://github.com/sumantopal07/Smart-Image-Cropping.git  
+git clone https://github.com/sumantopal07/Smart-Image-Cropping.git
+python3 -m venv env
+source env/bin/activate
 pip install -r requirements.txt 
 flask run
 ```
