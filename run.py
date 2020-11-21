@@ -1,5 +1,4 @@
 from flask import Flask, request, redirect, url_for, send_file, send_from_directory, safe_join, abort, render_template
-from flask_socketio import SocketIO, send, emit
 import os
 import sys
 import time
@@ -10,7 +9,8 @@ from scipy.ndimage.filters import convolve
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
-socketio = SocketIO(app)
+
+global_pointer="please first select image of jpg/jpeg format"
 
 ############################################################################################################
 ############################################################################################################
@@ -41,28 +41,17 @@ def calc_energy(img):
 
     return energy_map
 
-# @socketio.on('wwww')
-# def handle_message(y):
-#     print(y)
-#     x="PQRS"
-#     emit("haha",x)
 
-# @socketio.on('wwww')
-# def handle_message():
-#     x="PQRS"
-#     emit("haha",x)
-
-@socketio.on('wwww')
 def crop_c(img, scale_c):
     r, c, _ = img.shape
     new_c = int(scale_c * c)
 
     
 
-    for i in range(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
-        #fx(str(i)+"/"+str(c - new_c))
-        emit("haha",i)
+    for i in trange(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
+        global_pointer=str(i)+" "+str(c - new_c)
         img = carve_column(img)
+
 
     return img
 
@@ -168,6 +157,12 @@ def index():
     return render_template("/public/upload_image.html")
 
 
+@app.route("/loading")
+def loading():
+    return {"map": global_pointer}
+
+
+## Apologize for very bad naming
 @app.route("/admin")
 def admin():
     return redirect("https://github.com/sumantopal07/Content-Aware-Resizing-using-Dynamic-Programming",code=302)
@@ -203,6 +198,7 @@ def allowed_image_filesize(filesize):
 
 @app.route("/upload_image", methods=["GET", "POST"])
 def upload_image():
+    print("HELLLLLOOOOOOOOOOOOOOO")
 
     if request.method == "POST":
 
@@ -230,16 +226,18 @@ def upload_image():
                     send_file(app.config["IMAGE_UPLOADS"]+filename,as_attachment=True)
                     # render_template("/public/xyz.html")
                     MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename,app.config["IMAGE_DOWNLOADS"]+"new_image.jpg")
-                    print("hello")
+                    #print("hello")
+                    global_pointer="please first select image of jpg/jpeg format"
                     return redirect(url_for('upload_image'))
 
                 else:
                     print("That file extension is not allowed")
                     return redirect(request.url)
 
+
     return render_template("/public/upload_image.html")
 
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app)
+    app.run(host='0.0.0.0', port=port)

@@ -14,10 +14,10 @@
             <form action="/upload_image" method="POST" enctype="multipart/form-data">
 
                 <div class="form-group">
-                    <label>Select image</label>
+                    <label>Select image (only JPG supported)</label>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="image" id="image" oninput="filesize(this);">
-                        <label class="custom-file-label" for="image" id="DDD">Select image..</label>
+                        <label class="custom-file-label" for="image" id="DDD"></label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -39,31 +39,52 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Upload</button>
+                <center><button id="VVVVV" type="submit" class="btn btn-primary">Upload</button></center>
 
             </form>
             <center>
-                <h3></h3>
+                <h3 id="BBBBBB"></h3>
             </center>
 
         </div>
     </div>
 </div>
-<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" ></script>
-<script type="text/javascript" charset="utf-8" >
-    console.log("I've been clicked!!");
-    var socket = io.connect("http://localhost:5000/");
-    const x = document.querySelector("h3");
-    socket.on('connect', function () {
-        console.log("Connection Made");
-        socket.emit("wwww");
-    });
-    socket.on('haha', (i) => {
-        x.innerHTML=i;
-    })
+<script type="text/javascript" charset="utf-8">
+    console.log("Javascript loaded");
     function filesize(elem) {
         document.cookie = `filesize=${elem.files[0].size}`
     }
+    document.querySelector("#image").onchange = function () {
+        document.querySelector("#DDD").innerHTML = this.files[0].name;
+    }
+    let j = 0;
+    //////////////////////////////////////////////////////////////////////////////
+    document.getElementById("VVVVV").addEventListener("click", (e) => {
+        //e.preventDefault();
+        //console.log("click me");
+
+        //for(let i=0;i<=10;i++,j++);console.log(j);
+
+        let y;
+        function fname() {
+            fetch('/loading').then(function (response) {
+                //console.log(response.json());
+                return response.json();
+            }).then((x) => {
+                document.querySelector("#BBBBBB").innerHTML = x.map;
+                y = x.map;
+                console.log(x.map);
+                if (y[0] == 'p')
+                    fx();
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+        let refreshIntervalId = setInterval(fname, 500);
+        function fx() {
+            clearInterval(refreshIntervalId);
+        }
+    })
 </script>
 
 {% endblock %}
