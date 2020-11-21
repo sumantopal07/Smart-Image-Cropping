@@ -1,6 +1,4 @@
-
 import sys
-import time
 
 # tqdm gives us a pretty progress bar to visualize progress.
 from tqdm import trange
@@ -35,8 +33,6 @@ def calc_energy(img):
 def crop_c(img, scale_c):
     r, c, _ = img.shape
     new_c = int(scale_c * c)
-
-    
 
     for i in trange(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
         img = carve_column(img)
@@ -94,8 +90,30 @@ def minimum_seam(img):
 
     return M, backtrack
 
-def main(which_axis,scale,in_filename,out_filename):
-    start = time.time()
+# def main():
+#     if len(sys.argv) != 5:
+#         print('usage: carver.py <r/c> <scale> <image_in> <image_out>', file=sys.stderr)
+#         sys.exit(1)
+
+#     which_axis = sys.argv[1]
+#     scale = float(sys.argv[2])
+#     in_filename = sys.argv[3]
+#     out_filename = sys.argv[4]
+
+#     img = imread(in_filename)
+
+#     if which_axis == 'r':
+#         out = crop_r(img, scale)
+#     elif which_axis == 'c':
+#         out = crop_c(img, scale)
+#     else:
+#         print('usage: carver.py <r/c> <scale> <image_in> <image_out>', file=sys.stderr)
+#         sys.exit(1)
+    
+#     imwrite(out_filename, out)
+
+
+def MAIN(which_axis,scale,in_filename,out_filename):
     # if len(sys.argv) != 5:
     #     print('usage: carver.py <r/c> <scale> <image_in> <image_out>', file=sys.stderr)
     #     sys.exit(1)
@@ -105,6 +123,13 @@ def main(which_axis,scale,in_filename,out_filename):
     # in_filename = sys.argv[3]
     # out_filename = sys.argv[4]
 
+    # print(which_axis)
+    # print(int(scale))
+    # print(in_filename)
+    # print(out_filename)
+    # return 
+
+    scale=float(scale)
     img = imread(in_filename)
 
     if which_axis == 'r':
@@ -116,8 +141,10 @@ def main(which_axis,scale,in_filename,out_filename):
         sys.exit(1)
     
     imwrite(out_filename, out)
-    end = time.time()
-    print(end - start)
-
-if __name__ == '__main__':
-    main()
+    
+if __name__ == "__main__":
+    a='r'
+    b=0.75
+    c='/home/sumanto/Desktop/PROJECT/Content-Aware-Resizing-using-Dynamic-Programming/static/img/uploads/Screenshot_from_2020-11-13_11-37-46.jpg'
+    d='/home/sumanto/Desktop/PROJECT/Content-Aware-Resizing-using-Dynamic-Programming/static/img/downloads/new_image.jpg'
+    MAIN(a,b,c,d)
