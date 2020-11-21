@@ -41,6 +41,18 @@ def calc_energy(img):
 
     return energy_map
 
+# @socketio.on('wwww')
+# def handle_message(y):
+#     print(y)
+#     x="PQRS"
+#     emit("haha",x)
+
+# @socketio.on('wwww')
+# def handle_message():
+#     x="PQRS"
+#     emit("haha",x)
+
+@socketio.on('wwww')
 def crop_c(img, scale_c):
     r, c, _ = img.shape
     new_c = int(scale_c * c)
@@ -48,6 +60,8 @@ def crop_c(img, scale_c):
     
 
     for i in range(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
+        #fx(str(i)+"/"+str(c - new_c))
+        emit("haha",i)
         img = carve_column(img)
 
     return img
@@ -60,6 +74,8 @@ def crop_r(img, scale_r):
 
 def carve_column(img):
     r, c, _ = img.shape
+    print(r)
+    print(c)
 
     M, backtrack = minimum_seam(img)
 
@@ -113,6 +129,13 @@ def MAIN(which_axis,scale,in_filename,out_filename):
     # in_filename = sys.argv[3]
     # out_filename = sys.argv[4]
 
+    # print(which_axis)
+    # print(float(scale))
+    # print(in_filename)
+    # print(out_filename)
+    # return 
+
+    scale=float(scale)
     img = imread(in_filename)
 
     if which_axis == 'r':
@@ -130,11 +153,11 @@ def MAIN(which_axis,scale,in_filename,out_filename):
 ############################################################################################################
 
 
-@socketio.on('my event')
-def handle_message(message):
-    print(message)
-    for i in range(10000):
-        emit("haha",i)
+# @socketio.on('my event')
+# def handle_message(message):
+#     print(message)
+#     for i in range(10000):
+#         emit("haha",i)
 
 
 
@@ -153,6 +176,7 @@ from werkzeug.utils import secure_filename
 
 
 app.config["IMAGE_UPLOADS"] = os.getcwd()+"/static/img/uploads/"
+app.config["IMAGE_DOWNLOADS"] = os.getcwd()+"/static/img/downloads/"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF"]
 app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
 
@@ -186,6 +210,7 @@ def upload_image():
 
             if "filesize" in request.cookies:
 
+                
                 if not allowed_image_filesize(request.cookies["filesize"]):
                     print("Filesize exceeded maximum limit")
                     return redirect(request.url)
@@ -203,8 +228,9 @@ def upload_image():
 
                     print("Image saved")
                     send_file(app.config["IMAGE_UPLOADS"]+filename,as_attachment=True)
-                    render_template("/public/xyz.html")
-                    MAIN()
+                    # render_template("/public/xyz.html")
+                    MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename,app.config["IMAGE_DOWNLOADS"]+"new_image.jpg")
+                    print("hello")
                     return redirect(url_for('upload_image'))
 
                 else:
