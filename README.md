@@ -15,7 +15,8 @@ image needs to be cropped, and the other will be how to image is to be cropped r
 
 ## Video Demonstration 
 
-https://youtu.be/i6xf8byebbo  
+Algorithm Explaination : https://youtu.be/i6xf8byebbo
+Working Demo           : https://youtu.be/VsM55waduk0
 
 
 ## Installation
