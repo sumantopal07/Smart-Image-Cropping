@@ -1,6 +1,3 @@
-
-wait fo now
-
 ## Smart Image Cropping
 
 This Application is developed to make the work of Image Resizing more precise by
