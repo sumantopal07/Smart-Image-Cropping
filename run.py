@@ -49,7 +49,11 @@ def crop_c(img, scale_c):
     
 
     for i in trange(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
-        global_pointer=str(i)+" "+str(c - new_c)
+        global global_pointer 
+        percentage = 100 * i
+        percentage //=(c-new_c) 
+
+        global_pointer = "Loading ("+str(percentage)+"%)..."
         img = carve_column(img)
 
 
@@ -63,8 +67,8 @@ def crop_r(img, scale_r):
 
 def carve_column(img):
     r, c, _ = img.shape
-    print(r)
-    print(c)
+    # print(r)
+    # print(c)
 
     M, backtrack = minimum_seam(img)
 
@@ -109,21 +113,6 @@ def minimum_seam(img):
     return M, backtrack
 
 def MAIN(which_axis,scale,in_filename,out_filename):
-    # if len(sys.argv) != 5:
-    #     print('usage: carver.py <r/c> <scale> <image_in> <image_out>', file=sys.stderr)
-    #     sys.exit(1)
-
-    # which_axis = sys.argv[1]
-    # scale = float(sys.argv[2])
-    # in_filename = sys.argv[3]
-    # out_filename = sys.argv[4]
-
-    # print(which_axis)
-    # print(float(scale))
-    # print(in_filename)
-    # print(out_filename)
-    # return 
-
     scale=float(scale)
     img = imread(in_filename)
 
@@ -141,16 +130,10 @@ def MAIN(which_axis,scale,in_filename,out_filename):
 ############################################################################################################
 ############################################################################################################
 
-
-# @socketio.on('my event')
-# def handle_message(message):
-#     print(message)
-#     for i in range(10000):
-#         emit("haha",i)
-
-
-
-
+## Apologize for very bad naming
+@app.route("/admin")
+def admin():
+    return redirect("https://github.com/sumantopal07/Content-Aware-Resizing-using-Dynamic-Programming",code=302)
 
 @app.route("/")
 def index():
@@ -159,13 +142,8 @@ def index():
 
 @app.route("/loading")
 def loading():
+    global global_pointer 
     return {"map": global_pointer}
-
-
-## Apologize for very bad naming
-@app.route("/admin")
-def admin():
-    return redirect("https://github.com/sumantopal07/Content-Aware-Resizing-using-Dynamic-Programming",code=302)
 
 from werkzeug.utils import secure_filename
 
@@ -195,13 +173,25 @@ def allowed_image_filesize(filesize):
     else:
         return False
 
+import shutil
 
 @app.route("/upload_image", methods=["GET", "POST"])
 def upload_image():
-    print("HELLLLLOOOOOOOOOOOOOOO")
-
+    
+    location_uploads = os.getcwd()+"/static/img/uploads/"
+    location_downloads = os.getcwd()+"/static/img/downloads/"
+    if(os.path.isdir(location_uploads)):
+        shutil.rmtree(location_downloads)
+    if(os.path.isdir(location_uploads)):
+        shutil.rmtree(location_uploads)
+    
+    os.mkdir(location_downloads)
+    os.mkdir(location_uploads)
+    
     if request.method == "POST":
-
+        global global_pointer
+        global_pointer = "Please Wait.."
+        print("HELLLLLOOOOOOOOOOOOOOO")
         if request.files:
 
             if "filesize" in request.cookies:
@@ -241,3 +231,38 @@ def upload_image():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+
+
+# @socketio.on('my event')
+# def handle_message(message):
+#     print(message)
+#     for i in range(10000):
+#         emit("haha",i)
+
+# @app.route("/a1")
+# def A1():
+#     print("a1 route started")
+#     o=1
+#     while(o<=100000000):
+#        o+=1
+#     print("a1 ended")
+#     return {"map": "hello1"}
+
+# @app.route("/a2")
+# def A2():
+#     print("a2 route started")
+#     o=1
+#     while(o<=3000000):
+#        o+=1
+#     print("a2 ended")
+#     return {"map": "hello2"}
+
+# @app.route("/a3")
+# def A3():
+#     print("a3 route started")
+#     o=1
+#     while(o<=2):
+#        o+=1
+#     print("a3 ended")
+#     return {"map": "hello3"}
