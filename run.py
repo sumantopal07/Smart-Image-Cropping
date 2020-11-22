@@ -130,6 +130,14 @@ def MAIN(which_axis,scale,in_filename,out_filename):
 ############################################################################################################
 ############################################################################################################
 
+import shutil
+app.config["IMAGE_UPLOADS"] = os.getcwd()+"/static/img/uploads/"
+app.config["IMAGE_DOWNLOADS"] = os.getcwd()+"/static/img/downloads/"
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG"]
+app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
+from werkzeug.utils import secure_filename
+
+
 ## Apologize for very bad naming
 @app.route("/admin")
 def admin():
@@ -145,13 +153,6 @@ def loading():
     global global_pointer 
     return {"map": global_pointer}
 
-from werkzeug.utils import secure_filename
-
-
-app.config["IMAGE_UPLOADS"] = os.getcwd()+"/static/img/uploads/"
-app.config["IMAGE_DOWNLOADS"] = os.getcwd()+"/static/img/downloads/"
-app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF"]
-app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
 
 def allowed_image(filename):
 
@@ -173,18 +174,19 @@ def allowed_image_filesize(filesize):
     else:
         return False
 
-import shutil
 
 @app.route("/upload_image", methods=["GET", "POST"])
 def upload_image():
     
-    location_uploads = os.getcwd()+"/static/img/uploads/"
-    location_downloads = os.getcwd()+"/static/img/downloads/"
-    if(os.path.isdir(location_uploads)):
+    location_uploads = os.getcwd()+"/static/img/uploads"
+    location_downloads = os.getcwd()+"/static/img/downloads"
+    if(os.path.isdir(location_downloads)):
         shutil.rmtree(location_downloads)
+        #print("cc")
     if(os.path.isdir(location_uploads)):
+        #print("fff")
         shutil.rmtree(location_uploads)
-    
+    print("running")
     os.mkdir(location_downloads)
     os.mkdir(location_uploads)
     
@@ -199,31 +201,35 @@ def upload_image():
                 
                 if not allowed_image_filesize(request.cookies["filesize"]):
                     print("Filesize exceeded maximum limit")
-                    return redirect(request.url)
+                    return render_template("/public/upload_image.html")
 
                 image = request.files["image"]
 
                 if image.filename == "":
                     print("No filename")
-                    return redirect(request.url)
+                    return render_template("/public/upload_image.html")
+
 
                 if allowed_image(image.filename):
-                    filename = secure_filename(image.filename)
+                    filename1 = secure_filename(image.filename)
 
-                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+
+                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename1))
 
                     print("Image saved")
-                    send_file(app.config["IMAGE_UPLOADS"]+filename,as_attachment=True)
+                    send_file(app.config["IMAGE_UPLOADS"]+filename1,as_attachment=True)
                     # render_template("/public/xyz.html")
-                    MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename,app.config["IMAGE_DOWNLOADS"]+"new_image.jpg")
-                    #print("hello")
-                    global_pointer="please first select image of jpg/jpeg format"
-                    return redirect(url_for('upload_image'))
+                    MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename1,app.config["IMAGE_DOWNLOADS"]+filename1)
+                    print("ending")
+                    global_pointer="check downloads..."
+                    return send_from_directory(app.config["IMAGE_DOWNLOADS"],filename=filename1,as_attachment=True)
+                    # print(filename1)
+                    # return render_template("/public/upload_image.html")
+
 
                 else:
                     print("That file extension is not allowed")
-                    return redirect(request.url)
-
+                    return render_template("/public/upload_image.html")
 
     return render_template("/public/upload_image.html")
 

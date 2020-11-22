@@ -1,6 +1,6 @@
 {% extends "public/templates/public_template.html" %}
 
-{% block title %}Upload{% endblock %}
+{% block title %}Smart Image Cropping{% endblock %}
 
 {% block main %}
 
@@ -44,7 +44,8 @@
             <hr>
             <br>
             <center>
-                <h5 id="BBBBBB"></h3>
+                <h5 id="BBBBBB">
+                    </h3>
             </center>
 
         </div>
@@ -64,7 +65,7 @@
         //e.preventDefault();
         console.log("click me");
         document.querySelector("#BBBBBB").innerHTML = "Initialising... (wait for few seconds)";
-        
+
         let y;
         function fname() {
             fetch('/loading').then(function (response) {
@@ -72,19 +73,30 @@
             }).then((x) => {
                 document.querySelector("#BBBBBB").innerHTML = x.map;
                 y = x.map;
-                if (y[0] == 'p')
+                if (y[0] == 'p' || y[0] == 'c')
                     fx();
                 console.log(x.map);
             }).catch((error) => {
                 console.log(error);
-                
+
             })
         }
         let refreshIntervalId = setInterval(fname, 7500);
         function fx() {
             clearInterval(refreshIntervalId);
+            document.getElementById("VVVVV").disabled=false;
         }
     })
+
+    function fname2() {
+        let z=document.querySelector("#BBBBBB").innerHTML;
+        if (z.length>0 && (z[0] == 'L' || z[0] == 'p' || z[0]=='I'))
+            fx2();
+    }
+    let refreshIntervalId2 = setInterval(fname2, 50);
+    function fx2() {
+        document.getElementById("VVVVV").disabled=true;
+    }
 
     // fetch('/a1')
     // .then( res => res.json())
