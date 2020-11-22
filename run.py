@@ -134,7 +134,7 @@ import shutil
 app.config["IMAGE_UPLOADS"] = os.getcwd()+"/static/img/uploads/"
 app.config["IMAGE_DOWNLOADS"] = os.getcwd()+"/static/img/downloads/"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG"]
-app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
+app.config["MAX_IMAGE_FILESIZE"] = 2 * 1024 * 1024
 from werkzeug.utils import secure_filename
 
 
