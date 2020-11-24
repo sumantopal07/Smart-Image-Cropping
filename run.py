@@ -1,11 +1,11 @@
 from flask import Flask, request, redirect, url_for, send_file, send_from_directory, safe_join, abort, render_template
-import os
 import sys
 import time
 from tqdm import trange
 import numpy as np
 from imageio import imread, imwrite
 from scipy.ndimage.filters import convolve
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
@@ -176,17 +176,7 @@ def allowed_image_filesize(filesize):
 @app.route("/upload_image", methods=["GET", "POST"])
 def upload_image():
     
-    location_uploads = os.getcwd()+"/static/img/uploads"
-    location_downloads = os.getcwd()+"/static/img/downloads"
-
-    if(os.path.isdir(location_downloads)):
-        shutil.rmtree(location_downloads)
     
-    if(os.path.isdir(location_uploads)):
-        shutil.rmtree(location_uploads)
-    
-    os.mkdir(location_downloads)
-    os.mkdir(location_uploads)
 
     if request.method == "POST":
 
@@ -235,3 +225,17 @@ if __name__ == "__main__":
 # # app.run(host='0.0.0.0', port=port) # <---- REMOVE THIS
 # # serve your flask app with waitress, instead of running it directly.
 # serve(app) # <---- ADD THIS
+
+
+
+# location_uploads = os.getcwd()+"/static/img/uploads"
+# location_downloads = os.getcwd()+"/static/img/downloads"
+
+# if(os.path.isdir(location_downloads)):
+#     shutil.rmtree(location_downloads)
+
+# if(os.path.isdir(location_uploads)):
+#     shutil.rmtree(location_uploads)
+
+# os.mkdir(location_downloads)
+# os.mkdir(location_uploads)
