@@ -228,5 +228,10 @@ def upload_image():
     return render_template("/public/upload_image.html")
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
+
+from waitress import serve
+# app.run(host='0.0.0.0', port=port) # <---- REMOVE THIS
+# serve your flask app with waitress, instead of running it directly.
+serve(app) # <---- ADD THIS
