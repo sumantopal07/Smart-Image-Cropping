@@ -17,17 +17,17 @@
                     <label>Select image (only JPG supported and upto 2 MB)</label>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="image" id="image" oninput="filesize(this);">
-                        <label class="custom-file-label" for="image" id="DDD"></label>
+                        <label class="custom-file-label" for="image" id="Image_Text"></label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="uk-form-label">Scale</div>
                     <select class="uk-select" id="scale" name="scale">
                         <option value="0.90">90% (takes around 5 minutes to process)</option>
-                        <option value="0.80">80% (takes around 5 minutes to process)</option>
-                        <option value="0.75%">75% (takes around 5 minutes to process)</option>
-                        <option value="0.50">50% (takes around 5 minutes to process)</option>
-                        <option value="0.25">25% (takes around 5 minutes to process)</option>
+                        <option value="0.80">80% (takes around 7 minutes to process)</option>
+                        <option value="0.75%">75% (takes around 10 minutes to process)</option>
+                        <option value="0.50">50% (takes around 14 minutes to process)</option>
+                        <option value="0.25">25% (takes around 18 minutes to process)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -38,80 +38,78 @@
                     </select>
                 </div>
 
-                <center><button id="VVVVV" type="submit" class="btn btn-primary">Upload</button></center>
+                <center><button id="button_id" type="submit" class="btn btn-primary">Upload</button></center>
 
             </form>
             <hr>
             <br>
             <center>
-                <h5 id="BBBBBB">
+                <h5 id="Loading_ID">
                     </h3>
             </center>
 
         </div>
     </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
 <script type="text/javascript" charset="utf-8">
-    console.log("Javascript loaded");
+
+
+    //STORING FILESIZE IN COOKIES
     function filesize(elem) {
         document.cookie = `filesize=${elem.files[0].size}`
     }
+
+    //Generate Unique ID
+    let CLIENT_SIDE_UNIQUE_ID = uuidv4().toString();
+    console.log(CLIENT_SIDE_UNIQUE_ID);
+    
+    fetch('/set_unique_id?id='+CLIENT_SIDE_UNIQUE_ID).then(function (response) {
+        return response.json();
+    }).then((x) => {
+        console.log("set to cookies successfully");
+    })
+
+
+    //FILENAME IN IMAGE BAR
     document.querySelector("#image").onchange = function () {
-        document.querySelector("#DDD").innerHTML = this.files[0].name;
+        document.querySelector("#Image_Text").innerHTML = this.files[0].name;
     }
-    //////////////////////////////////////////////////////////////////////////////
-    document.getElementById("VVVVV").addEventListener("click", (e) => {
-        //e.preventDefault();
+
+    //Loading Screen Initiate
+    document.getElementById("button_id").addEventListener("click", (e) => {
         console.log("click me");
-        document.querySelector("#BBBBBB").innerHTML = "Initialising... (wait for few seconds)";
+        document.querySelector("#Loading_ID").innerHTML = "Initialising... (wait for few seconds)";
 
         let y;
         function fname() {
-            fetch('/loading').then(function (response) {
+            fetch('/loading?ID='+CLIENT_SIDE_UNIQUE_ID).then(function (response) {
                 return response.json();
             }).then((x) => {
-                document.querySelector("#BBBBBB").innerHTML = x.map;
+                document.querySelector("#Loading_ID").innerHTML = x.map;
                 y = x.map;
                 if (y[0] == 'p' || y[0] == 'c')
-                    fx();
+                    STOP_FETCHING_LOADING_SCREEN();
                 console.log(x.map);
-            }).catch((error) => {
-                console.log(error);
-
             })
         }
-        let refreshIntervalId = setInterval(fname, 7500);
-        function fx() {
+        let refreshIntervalId = setInterval(fname, 2000);
+        function STOP_FETCHING_LOADING_SCREEN() {
             clearInterval(refreshIntervalId);
-            document.getElementById("VVVVV").disabled=false;
+            document.getElementById("button_id").disabled = false;
         }
     })
 
-    function fname2() {
-        let z=document.querySelector("#BBBBBB").innerHTML;
-        if (z.length>0 && (z[0] == 'L' || z[0] == 'p' || z[0]=='I'))
-            fx2();
+    //Button Disable
+    function DISABLE_BUTTON() {
+        let z = document.querySelector("#Loading_ID").innerHTML;
+        if (z.length > 0 && (z[0] == 'L' || z[0] == 'p' || z[0] == 'I'))
+            ENABLE_BUTTON();
     }
-    let refreshIntervalId2 = setInterval(fname2, 50);
-    function fx2() {
-        document.getElementById("VVVVV").disabled=true;
+    let refreshIntervalId2 = setInterval(DISABLE_BUTTON, 50);
+    function ENABLE_BUTTON() {
+        document.getElementById("button_id").disabled = true;
     }
-
-    // fetch('/a1')
-    // .then( res => res.json())
-    // .then(x => console.log("response a1="+x.map))
-
-    // fetch('/a2')
-    // .then( res => res.json())
-    // .then(x => console.log("response a2="+x.map))
-
-    // fetch('/a3')
-    // .then( res => res.json())
-    // .then((x) => 
-    // {
-    //     console.log("response a3="+x.map)
-    // })
 </script>
 
 {% endblock %}

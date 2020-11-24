@@ -10,8 +10,7 @@ from scipy.ndimage.filters import convolve
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 
-global_pointer="please first select image of jpg/jpeg format"
-
+dictionary={}
 ############################################################################################################
 ############################################################################################################
 ############################################################################################################
@@ -49,11 +48,11 @@ def crop_c(img, scale_c):
     
 
     for i in trange(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
-        global global_pointer 
+        global dictionary 
         percentage = 100 * i
         percentage //=(c-new_c) 
 
-        global_pointer = "Loading ("+str(percentage)+"%)..."
+        dictionary[request.args.get('id')] = "Loading ("+str(percentage)+"%)..."
         img = carve_column(img)
 
 
@@ -138,7 +137,6 @@ app.config["MAX_IMAGE_FILESIZE"] = 2 * 1024 * 1024
 from werkzeug.utils import secure_filename
 
 
-## Apologize for very bad naming
 @app.route("/admin")
 def admin():
     return redirect("https://github.com/sumantopal07/Content-Aware-Resizing-using-Dynamic-Programming",code=302)
@@ -147,20 +145,21 @@ def admin():
 def index():
     return render_template("/public/upload_image.html")
 
+@app.route("/set_unique_id")
+def UNIQUE_FUNCTION():
+    global dictionary
+    dictionary[request.args.get('id')]="please first select image of jpg/jpeg format"
+    return {"map": dictionary[request.args.get('id')]}
 
 @app.route("/loading")
 def loading():
-    global global_pointer 
-    return {"map": global_pointer}
-
+    global dictionary
+    return {"map": dictionary[request.args.get('id')]}
 
 def allowed_image(filename):
-
     if not "." in filename:
         return False
-
     ext = filename.rsplit(".", 1)[1]
-
     if ext.upper() in app.config["ALLOWED_IMAGE_EXTENSIONS"]:
         return True
     else:
@@ -168,7 +167,6 @@ def allowed_image(filename):
 
 
 def allowed_image_filesize(filesize):
-
     if int(filesize) <= app.config["MAX_IMAGE_FILESIZE"]:
         return True
     else:
@@ -180,25 +178,24 @@ def upload_image():
     
     location_uploads = os.getcwd()+"/static/img/uploads"
     location_downloads = os.getcwd()+"/static/img/downloads"
+
     if(os.path.isdir(location_downloads)):
         shutil.rmtree(location_downloads)
-        #print("cc")
+    
     if(os.path.isdir(location_uploads)):
-        #print("fff")
         shutil.rmtree(location_uploads)
-    print("running")
+    
     os.mkdir(location_downloads)
     os.mkdir(location_uploads)
-    
+
     if request.method == "POST":
-        global global_pointer
-        global_pointer = "Please Wait.."
-        print("HELLLLLOOOOOOOOOOOOOOO")
+
+        dictionary[request.args.get('id')] = "Please Wait.."
+        
         if request.files:
 
             if "filesize" in request.cookies:
 
-                
                 if not allowed_image_filesize(request.cookies["filesize"]):
                     print("Filesize exceeded maximum limit")
                     return render_template("/public/upload_image.html")
@@ -218,13 +215,10 @@ def upload_image():
 
                     print("Image saved")
                     send_file(app.config["IMAGE_UPLOADS"]+filename1,as_attachment=True)
-                    # render_template("/public/xyz.html")
                     MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename1,app.config["IMAGE_DOWNLOADS"]+filename1)
-                    print("ending")
-                    global_pointer="check downloads..."
+                    
+                    dictionary[request.args.get('id')]="check downloads..."
                     return send_from_directory(app.config["IMAGE_DOWNLOADS"],filename=filename1,as_attachment=True)
-                    # print(filename1)
-                    # return render_template("/public/upload_image.html")
 
 
                 else:
@@ -237,38 +231,3 @@ def upload_image():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-
-
-# @socketio.on('my event')
-# def handle_message(message):
-#     print(message)
-#     for i in range(10000):
-#         emit("haha",i)
-
-# @app.route("/a1")
-# def A1():
-#     print("a1 route started")
-#     o=1
-#     while(o<=100000000):
-#        o+=1
-#     print("a1 ended")
-#     return {"map": "hello1"}
-
-# @app.route("/a2")
-# def A2():
-#     print("a2 route started")
-#     o=1
-#     while(o<=3000000):
-#        o+=1
-#     print("a2 ended")
-#     return {"map": "hello2"}
-
-# @app.route("/a3")
-# def A3():
-#     print("a3 route started")
-#     o=1
-#     while(o<=2):
-#        o+=1
-#     print("a3 ended")
-#     return {"map": "hello3"}
