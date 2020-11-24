@@ -23,6 +23,7 @@ Working Demo           : https://youtu.be/VsM55waduk0
 
 ```bash
 git clone https://github.com/sumantopal07/Smart-Image-Cropping.git
+cd Smart-Image-Cropping/
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt 
