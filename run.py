@@ -6,13 +6,10 @@ import numpy as np
 from imageio import imread, imwrite
 from scipy.ndimage.filters import convolve
 import os
-from flask_pymongo import PyMongo
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
-app.config['MONGO_URI'] = 'mongodb+srv://1234:1234@cluster0.htuyu.mongodb.net/test'
-mongo = PyMongo(app)
 
 dictionary={}
 ############################################################################################################
@@ -128,7 +125,6 @@ def MAIN(which_axis,scale,img,out_filename):
     from PIL import Image as im 
 
     data = im.fromarray(out)
-    print(type(data)) 
     return data
 
 

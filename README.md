@@ -29,6 +29,9 @@ source env/bin/activate
 pip install -r requirements.txt 
 flask run
 ```
+## Look of App  
+![](Screenshots/x5.png) 
+
 
 
 ## Results
