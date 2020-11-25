@@ -31,7 +31,7 @@ flask run
 ```
 ## Deployed  
 https://sumanto-weather-app.herokuapp.com/  
-##### [WARNING: App is running very slow, any suggestions will be appreciated, you can open an issue and we will discuss] 
+###### [WARNING: App is running very slow, any suggestions will be appreciated, you can open an issue and we will discuss] 
 
 ## Look of App  
 ![](Screenshots/x5.png) 
