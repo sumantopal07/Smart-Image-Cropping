@@ -29,9 +29,9 @@ source env/bin/activate
 pip install -r requirements.txt 
 flask run
 ```
-## Deployed  
-https://sumanto-weather-app.herokuapp.com/  
-###### [WARNING: App is running very slow, any suggestions will be appreciated, you can open an issue and we will discuss] 
+## Deployed   
+###### [WARNING: App is running very slow, any suggestions will be appreciated, you can open an issue and we will discuss]   
+https://sumanto-weather-app.herokuapp.com/ 
 
 ## Look of App  
 ![](Screenshots/x5.png) 
