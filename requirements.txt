@@ -3,6 +3,7 @@ click==7.1.2
 dnspython==1.16.0
 eventlet==0.29.1
 Flask==1.1.2
+Flask-PyMongo==2.3.0
 Flask-SocketIO==4.3.1
 greenlet==0.4.17
 gunicorn==20.0.4
@@ -13,6 +14,7 @@ MarkupSafe==1.1.1
 numpy==1.19.4
 Pillow==8.0.1
 pycodestyle==2.6.0
+pymongo==3.11.1
 python-engineio==3.13.2
 python-socketio==4.6.0
 scipy==1.5.4

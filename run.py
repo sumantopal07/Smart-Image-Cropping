@@ -6,9 +6,13 @@ import numpy as np
 from imageio import imread, imwrite
 from scipy.ndimage.filters import convolve
 import os
+from flask_pymongo import PyMongo
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
+app.config['MONGO_URI'] = 'mongodb+srv://1234:1234@cluster0.htuyu.mongodb.net/test'
+mongo = PyMongo(app)
 
 dictionary={}
 ############################################################################################################
@@ -111,9 +115,8 @@ def minimum_seam(img):
 
     return M, backtrack
 
-def MAIN(which_axis,scale,in_filename,out_filename):
+def MAIN(which_axis,scale,img,out_filename):
     scale=float(scale)
-    img = imread(in_filename)
 
     if which_axis == 'r':
         out = crop_r(img, scale)
@@ -122,8 +125,12 @@ def MAIN(which_axis,scale,in_filename,out_filename):
     else:
         print('usage: carver.py <r/c> <scale> <image_in> <image_out>', file=sys.stderr)
         sys.exit(1)
-    
-    imwrite(out_filename, out)
+    from PIL import Image as im 
+
+    data = im.fromarray(out)
+    print(type(data)) 
+    return data
+
 
 ############################################################################################################
 ############################################################################################################
@@ -184,6 +191,7 @@ def upload_image():
         
         if request.files:
 
+            
             if "filesize" in request.cookies:
 
                 if not allowed_image_filesize(request.cookies["filesize"]):
@@ -191,6 +199,7 @@ def upload_image():
                     return render_template("/public/upload_image.html")
 
                 image = request.files["image"]
+                img = imread(request.files["image"])
 
                 if image.filename == "":
                     print("No filename")
@@ -200,16 +209,13 @@ def upload_image():
                 if allowed_image(image.filename):
                     filename1 = secure_filename(image.filename)
 
-
-                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename1))
-
-                    print("Image saved")
-                    send_file(app.config["IMAGE_UPLOADS"]+filename1,as_attachment=True)
-                    MAIN(request.form["orientation"],request.form["scale"],app.config["IMAGE_UPLOADS"]+filename1,app.config["IMAGE_DOWNLOADS"]+filename1)
-                    
-                    dictionary[request.args.get('id')]="check downloads..."
-                    return send_from_directory(app.config["IMAGE_DOWNLOADS"],filename=filename1,as_attachment=True)
-
+                    a = MAIN(request.form["orientation"],request.form["scale"],img,str(12)+filename1)
+                    print(a)
+                    from io import BytesIO
+                    img_io = BytesIO()
+                    a.save(img_io, 'JPEG', quality=70)
+                    img_io.seek(0)
+                    return send_file(img_io,mimetype='image/jpeg',as_attachment=True,attachment_filename='smart_cropped_image.jpg')
 
                 else:
                     print("That file extension is not allowed")
@@ -220,22 +226,3 @@ def upload_image():
 
 if __name__ == "__main__":
     app.run()
-
-# from waitress import serve
-# # app.run(host='0.0.0.0', port=port) # <---- REMOVE THIS
-# # serve your flask app with waitress, instead of running it directly.
-# serve(app) # <---- ADD THIS
-
-
-
-# location_uploads = os.getcwd()+"/static/img/uploads"
-# location_downloads = os.getcwd()+"/static/img/downloads"
-
-# if(os.path.isdir(location_downloads)):
-#     shutil.rmtree(location_downloads)
-
-# if(os.path.isdir(location_uploads)):
-#     shutil.rmtree(location_uploads)
-
-# os.mkdir(location_downloads)
-# os.mkdir(location_uploads)
