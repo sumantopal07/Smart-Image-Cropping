@@ -53,7 +53,7 @@ flask run
 
 ## Deployed   
 ###### [WARNING: App is running very slow, any suggestions will be appreciated, you can open an issue and we will discuss]   
-https://sumanto-weather-app.herokuapp.com/ 
+https://sumanto.herokuapp.com/ 
 
 
 
