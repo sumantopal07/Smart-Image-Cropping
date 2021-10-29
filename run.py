@@ -13,9 +13,6 @@ app.config['SECRET_KEY'] = 'mysecret'
 
 dictionary={}
 ############################################################################################################
-############################################################################################################
-############################################################################################################
-
 
 def calc_energy(img):
     filter_du = np.array([
@@ -48,7 +45,7 @@ def crop_c(img, scale_c):
 
     
 
-    for i in trange(c - new_c): # use range if you don't want to use tqdm. trange shows a progess bar on the terminal
+    for i in trange(c - new_c):
         global dictionary 
         percentage = 100 * i
         percentage //=(c-new_c) 
@@ -67,9 +64,6 @@ def crop_r(img, scale_r):
 
 def carve_column(img):
     r, c, _ = img.shape
-    # print(r)
-    # print(c)
-
     M, backtrack = minimum_seam(img)
 
     # Create a (r, c) matrix filled with the value True
@@ -128,8 +122,6 @@ def MAIN(which_axis,scale,img,out_filename):
     return data
 
 
-############################################################################################################
-############################################################################################################
 ############################################################################################################
 
 import shutil
